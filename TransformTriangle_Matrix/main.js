@@ -1,5 +1,5 @@
 /**
- * 三角形旋转变换
+ * 使用矩阵进行三角形旋转变换
  */
 // 顶点着色器, 描述顶点特性
 const VSHADER_SOURCE = `
@@ -7,12 +7,9 @@ const VSHADER_SOURCE = `
   // y' = x sin b + y sin b
   // z' = z
   attribute vec4 a_Position;
-  uniform float u_CosB, u_SinB;
+  uniform mat4 u_Matrix;
   void main() {
-    gl_Position.x = a_Position.x * u_CosB - a_Position.y * u_SinB;
-    gl_Position.y = a_Position.x * u_SinB + a_Position.y * u_CosB;
-    gl_Position.z = a_Position.z;
-    gl_Position.w = 1.0;
+    gl_Position = a_Position * u_Matrix;
   }
 `;
 
@@ -45,10 +42,9 @@ function main() {
     return;
   }
 
-  const u_CosB = gl.getUniformLocation(gl.program, 'u_CosB');
-  const u_SinB = gl.getUniformLocation(gl.program, 'u_SinB');
-  if (!u_CosB || !u_SinB) {
-    console.error("无法找到 u_CosB || u_SinB 变量");
+  const u_Matrix = gl.getUniformLocation(gl.program, 'u_Matrix');
+  if (!u_Matrix) {
+    console.error("无法找到u_Matrix变量");
     return -1;
   }
 
@@ -57,8 +53,35 @@ function main() {
   const radian = Math.PI * rotate / 180;
   const cosB = Math.cos(radian);
   const sinB = Math.sin(radian);
-  gl.uniform1f(u_CosB, cosB);
-  gl.uniform1f(u_SinB, sinB);
+
+  // 位移矩阵
+  const transMatrix = new Float32Array([
+    1.0, 0.0, 0.0, 0.5,
+    0.0, 1.0, 0.0, 0.5,
+    0.0, 0.0, 1.0, 0.0,
+    0.0, 0.0, 0.0, 1.0
+  ]);
+
+  // 旋转矩阵
+  const rotateMatrix = new Float32Array([
+    cosB, -sinB, 0.0, 0.0,
+    sinB, cosB, 0.0, 0.0,
+    0.0, 0.0, 1.0, 0.0,
+    0.0, 0.0, 0.0, 1.0
+  ]);
+
+  // 缩放矩阵
+  const scaleMatrix = new Float32Array([
+    2.0, 0.0, 0.0, 0.0,
+    0.0, 1.0, 0.0, 0.0,
+    0.0, 0.0, 1.0, 0.0,
+    0.0, 0.0, 0.0, 1.0
+  ]);
+
+  // gl.uniformMatrix4fv(u_Matrix, false, transMatrix);
+  // gl.uniformMatrix4fv(u_Matrix, false, rotateMatrix);
+  gl.uniformMatrix4fv(u_Matrix, false, scaleMatrix);
+
 
   const len = initVertexBuffers(gl);
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
