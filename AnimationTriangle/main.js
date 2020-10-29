@@ -1,5 +1,5 @@
 /**
- * 使用矩阵进行三角形旋转变换
+ * 使用矩阵进行三角形旋转变换(使用矩阵操作库)
  */
 // 顶点着色器, 描述顶点特性
 const VSHADER_SOURCE = `
@@ -54,7 +54,11 @@ function main() {
   const cosB = Math.cos(radian);
   const sinB = Math.sin(radian);
 
-  gl.uniformMatrix4fv(u_Matrix, false, scaleMatrix);
+  // 复合矩阵
+  const modelMatrix = new Matrix4();
+  modelMatrix.translate(0.2, 0.2, 0);
+  // modelMatrix.setRotate(45, 0, 0, 1);
+  gl.uniformMatrix4fv(u_Matrix, false, modelMatrix.elements);
 
 
   const len = initVertexBuffers(gl);
