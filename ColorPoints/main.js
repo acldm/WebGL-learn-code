@@ -1,7 +1,5 @@
 /**
- * 在该示例中
- * 顶点着色器指定了点的位置和尺寸
- * 片元着色器指定了顶点的颜色
+ * 通过鼠标点击, 在不同象限绘制不同颜色的点
  */
 // 顶点着色器, 描述顶点特性
 const VSHADER_SOURCE = `
@@ -85,7 +83,7 @@ function click(e, gl, canvas, a_Position, u_FragColor) {
   gPoints.push([x, y]);
   gColors.push([
     x < 0 ? 0.5 : 1.0,
-    y < 0 ? 1.0 : 0.5,
+    y < 0 ? 1.0 : 0.0,
     0.0,
     1.0
   ]);

@@ -1,14 +1,12 @@
 /**
- * 缓冲区的使用
+ * 在该示例中
+ * 使用TRIANGLE_STRIP模式绘制了矩形
  */
-
 // 顶点着色器, 描述顶点特性
 const VSHADER_SOURCE = `
   attribute vec4 a_Position;
-  attribute float a_PointSize;
   void main() {
     gl_Position = a_Position;
-    gl_PointSize = a_PointSize;
   }
 `;
 
@@ -36,30 +34,22 @@ function main() {
     return;
   }
 
-   // 获取a_Position的存储位置
-   const a_PointSize = gl.getAttribLocation(gl.program, 'a_PointSize');
-   if (a_PointSize < 0) {
-     console.error("无法找到a_PointSize attribute变量");
-     return -2;
-   }
-
   const u_FragColor = gl.getUniformLocation(gl.program, 'u_FragColor');
   if (u_FragColor < 0) {
     console.error("无法找到u_FragColor attribute变量");
     return;
   }
   
-  gl.vertexAttrib1f(a_PointSize, 20.0);
   const len = initVertexBuffers(gl);
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
   gl.clear(gl.COLOR_BUFFER_BIT);
-  gl.drawArrays(gl.POINTS, 0, len);
+  gl.drawArrays(gl.TRIANGLE_STRIP, 0, len);
 }
 
 function initVertexBuffers(gl) {
+  // 绘制多个三角形,从第二个开始给出新三角形最后一个顶点即可。注意顺序。
   const vertexes = new Float32Array([
-    0.2, 0.2, 0.5, 0.3, 0.7, 0.8, 0.4, 0.9,
-    -0.2, -0.2, -0.5, -0.3, -0.7, -0.8, -0.4, -0.9,
+    -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, -0.5, 
   ]);
 
   const len = vertexes.length / 2;
