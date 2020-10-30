@@ -9,7 +9,7 @@ const VSHADER_SOURCE = `
   attribute vec4 a_Position;
   uniform mat4 u_Matrix;
   void main() {
-    gl_Position = a_Position * u_Matrix;
+    gl_Position = u_Matrix * a_Position;
   }
 `;
 
@@ -54,7 +54,27 @@ function main() {
   const cosB = Math.cos(radian);
   const sinB = Math.sin(radian);
 
-  gl.uniformMatrix4fv(u_Matrix, false, scaleMatrix);
+  const translateMatrix = new Float32Array([
+    1.0, 0, 0, 0,
+    0, 1.0, 0, 0,
+    0, 0, 1.0, 0,
+    0.2, 0.2, 0, 1.0,
+  ]);
+
+  const rotateMatrix = new Float32Array([
+    cosB, -sinB, 0, 0,
+    sinB, cosB, 0, 0,
+    0, 0, 1.0, 0,
+    0, 0, 0, 1.0,
+  ]);
+
+  const scaleMatrix = new Float32Array([
+    1.0, 0, 0, 0,
+    0, 1.0, 0, 0,
+    0, 0, 1.0, 0,
+    0, 0, 0, 1.0,
+  ]);
+  gl.uniformMatrix4fv(u_Matrix, false, translateMatrix);
 
 
   const len = initVertexBuffers(gl);
@@ -65,7 +85,7 @@ function main() {
 
 function initVertexBuffers(gl) {
   const vertexes = new Float32Array([
-    -0.5, -0.5, 0.5, -0.5, 0.0, 0.5
+    0.0, 0.5, -0.5, -0.5, 0.5, -0.5
   ]);
 
   const len = vertexes.length / 2;
