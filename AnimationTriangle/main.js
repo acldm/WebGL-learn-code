@@ -1,5 +1,5 @@
 /**
- * 使用矩阵进行三角形旋转变换(使用矩阵操作库)
+ * 三角形旋转动画
  */
 // 顶点着色器, 描述顶点特性
 const VSHADER_SOURCE = `
@@ -47,24 +47,7 @@ function main() {
     console.error("无法找到u_Matrix变量");
     return -1;
   }
-
-  // 旋转45度
-  const rotate = 45;
-  const radian = Math.PI * rotate / 180;
-  const cosB = Math.cos(radian);
-  const sinB = Math.sin(radian);
-
-  // 复合矩阵
-  const modelMatrix = new Matrix4();
-  modelMatrix.translate(0.2, 0.2, 0);
-  // modelMatrix.setRotate(45, 0, 0, 1);
-  gl.uniformMatrix4fv(u_Matrix, false, modelMatrix.elements);
-
-
-  const len = initVertexBuffers(gl);
-  gl.clearColor(0.0, 0.0, 0.0, 1.0);
-  gl.clear(gl.COLOR_BUFFER_BIT);
-  gl.drawArrays(gl.TRIANGLES, 0, len);
+  updateDraw(gl, u_Matrix);
 }
 
 function initVertexBuffers(gl) {
@@ -88,4 +71,20 @@ function initVertexBuffers(gl) {
   // 建立缓冲区到attribute真正连接
   gl.enableVertexAttribArray(a_Position);
   return len;
+}
+
+
+let rotate = 0;
+function updateDraw(gl, u_Matrix) {
+  rotate += 1;
+  const modelMatrix = new Matrix4();
+  modelMatrix.setRotate(rotate, 0, 0, 1);
+  gl.uniformMatrix4fv(u_Matrix, false, modelMatrix.elements);
+
+
+  const len = initVertexBuffers(gl);
+  gl.clearColor(0.0, 0.0, 0.0, 1.0);
+  gl.clear(gl.COLOR_BUFFER_BIT);
+  requestAnimationFrame(() => updateDraw(gl, u_Matrix));
+  gl.drawArrays(gl.TRIANGLES, 0, len);
 }
